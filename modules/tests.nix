@@ -54,7 +54,7 @@
         test-stream-combinator = {
           expr =
             let
-              doubledS = st 1 2 (s: s.map (n: n * 2));
+              doubledS = st 1 2 (ST.map (n: n * 2));
             in
             doubledS.toList;
           expected = [
@@ -71,7 +71,7 @@
                 home = "cfg1";
               };
             in
-            (multiS (s: s.sub "nixos")).toList;
+            (multiS (ST.sub "nixos")).toList;
           expected = [ "config1" ];
         };
 
@@ -89,7 +89,7 @@
                     b = 40;
                   };
             in
-            (multiS (s: s.sub "a")).toList;
+            (multiS (ST.sub "a")).toList;
           expected = [
             10
             30
@@ -122,7 +122,7 @@
             let
               multiS = st { f = x: x * 2; } { f = x: x + 10; };
             in
-            (multiS (s: s.sub.apply "f" 5)).toList;
+            (multiS (ST.sub.apply "f" 5)).toList;
           expected = [
             10
             15
