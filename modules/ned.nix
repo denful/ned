@@ -68,7 +68,7 @@ let
             ) rawStream
           );
 
-        sel = {
+        sub = {
           __functor = _: name: wrap (fx.stream.map (attrs: attrs.${name}) rawStream);
           apply = name: arg: wrap (fx.stream.map (attrs: attrs.${name} arg) rawStream);
           flat =
@@ -103,14 +103,14 @@ let
     filter = p: stream: stream.filter p;
     concat = otherS: stream: stream.concat otherS;
     flatMap = f: stream: stream.flatMap f;
-    sel = {
+    sub = {
       __functor =
         _: name: stream:
-        stream.sel name;
+        stream.sub name;
       apply =
         name: value: stream:
-        stream.sel.apply name value;
-      flat = name: stream: stream.sel.flat name;
+        stream.sub.apply name value;
+      flat = name: stream: stream.sub.flat name;
     };
   };
 

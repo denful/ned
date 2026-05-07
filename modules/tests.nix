@@ -71,7 +71,7 @@
                 home = "cfg1";
               };
             in
-            (multiS (s: s.sel "nixos")).toList;
+            (multiS (s: s.sub "nixos")).toList;
           expected = [ "config1" ];
         };
 
@@ -89,7 +89,7 @@
                     b = 40;
                   };
             in
-            (multiS (s: s.sel "a")).toList;
+            (multiS (s: s.sub "a")).toList;
           expected = [
             10
             30
@@ -110,7 +110,7 @@
                     y = "qux";
                   };
             in
-            (multiS (ST.sel "x")).toList;
+            (multiS (ST.sub "x")).toList;
           expected = [
             "foo"
             "baz"
@@ -122,7 +122,7 @@
             let
               multiS = st { f = x: x * 2; } { f = x: x + 10; };
             in
-            (multiS (s: s.sel.apply "f" 5)).toList;
+            (multiS (s: s.sub.apply "f" 5)).toList;
           expected = [
             10
             15
@@ -134,7 +134,7 @@
             let
               multiS = st { a = (st "x" "y"); } { b = "skip"; } { a = (st "z"); };
             in
-            (multiS (ST.sel.flat "a")).toList;
+            (multiS (ST.sub.flat "a")).toList;
           expected = [
             "x"
             "y"
@@ -529,7 +529,7 @@
 
               mainC = sources: {
                 user = st { isNormalUser = true; };
-                nixos = sources.user (ST.sel "nixos");
+                nixos = sources.user (ST.sub "nixos");
               };
 
               nixosModules = (ned.run { user = ned.fwd.hostUserFor topoS; } mainC).nixos.toList;
@@ -614,8 +614,8 @@
                 description = "${host.name}/${user.name}";
               }
             );
-            nixos = sources.user (ST.sel.flat "nixos");
-            darwin = sources.user (ST.sel.flat "darwin");
+            nixos = sources.user (ST.sub.flat "nixos");
+            darwin = sources.user (ST.sub.flat "darwin");
           };
 
           sinks = ned.run { user = ned.fwd.hostUserFor topoS; } mainC;
@@ -685,9 +685,9 @@
               let
                 classModules =
                   if host.class == "nixos" then
-                    sources.hostcfg (ST.sel.flat "nixos")
+                    sources.hostcfg (ST.sub.flat "nixos")
                   else
-                    sources.hostcfg (ST.sel.flat "darwin");
+                    sources.hostcfg (ST.sub.flat "darwin");
               in
               if host.class == "nixos" then
                 inputs.nixpkgs.lib.nixosSystem {
@@ -715,8 +715,8 @@
             os = ned.fwd.osConfigFor topoS;
             hostcfg = hostConfigD;
           } flakeC;
-          nixosConfigs = sinks.flake (ST.sel.flat "nixosConfigurations");
-          darwinConfigs = sinks.flake (ST.sel.flat "darwinConfigurations");
+          nixosConfigs = sinks.flake (ST.sub.flat "nixosConfigurations");
+          darwinConfigs = sinks.flake (ST.sub.flat "darwinConfigurations");
         in
         {
           test-flake-hostconfig-values-propagate = {
