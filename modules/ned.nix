@@ -219,7 +219,7 @@ let
         // hostAttrs
       ) (builtins.attrNames hostsByKey);
     in
-    builtins.foldl' (accS: host: accS (ctxD { inherit host; } compS)) st hosts;
+    (wrap (fx.stream.fromList hosts)).flatMap (host: ctxD { inherit host; } compS);
 
   # ---------------------------------------------------------------------------
   # topo.users :: compS -> compS
@@ -261,13 +261,43 @@ let
       })
     );
 
+  # osConfigD :: ST comp -> ST comp
+  #
+  # Contextual driver: reads active host scope, applies component to build
+  # osConfiguration (via nixpkgs.lib.nixosSystem or nix-darwin.lib.darwinSystem).
+  # Maps result to { host, osConfiguration } for downstream grouping.
+  osConfigD =
+    compS:
+    st (
+      { host }:
+      (ctxD { inherit host; } compS).map (osConfiguration: {
+        inherit host osConfiguration;
+      })
+    );
+
+  # selectHostS :: name -> ST -> ST
+  # Filter stream of { host, … } items to those where host.name == name.
+  selectHostS = name: streamS: streamS.filter (item: item.host.name == name);
+
+  # osConfigForD :: topoS -> ST comp -> ST
+  # Driver factory: fans out hosts from topoS, wraps results as { host, osConfiguration }.
+  osConfigForD = topoS: compS: hostsT topoS (osConfigD compS);
+
+  # hostUserForD :: topoS -> ST comp -> ST
+  # Driver factory: fans out hosts then users from topoS, maps output per user.
+  hostUserForD = topoS: compS: hostsT topoS (usersT (hostUserD compS));
+
   ned = {
     inherit ST st run;
     drive.ctx = ctxD;
     drive.scope = scopeD;
     topo.hosts = hostsT;
     topo.users = usersT;
+    topo.selectHost = selectHostS;
     fwd.hostUser = hostUserD;
+    fwd.osConfig = osConfigD;
+    fwd.osConfigFor = osConfigForD;
+    fwd.hostUserFor = hostUserForD;
   };
 
 in

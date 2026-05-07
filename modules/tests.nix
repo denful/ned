@@ -398,6 +398,51 @@
           expected = [ "custom" ];
         };
 
+        # -- ned.topo.selectHost -------------------------------------------
+
+        selectHost.test-filters-by-name = {
+          expr =
+            let
+              streamS =
+                st
+                  {
+                    host.name = "igloo";
+                    val = 1;
+                  }
+                  {
+                    host.name = "snow";
+                    val = 2;
+                  }
+                  {
+                    host.name = "igloo";
+                    val = 3;
+                  };
+            in
+            (ned.topo.selectHost "igloo" streamS).toList;
+          expected = [
+            {
+              host.name = "igloo";
+              val = 1;
+            }
+            {
+              host.name = "igloo";
+              val = 3;
+            }
+          ];
+        };
+
+        selectHost.test-empty-when-no-match = {
+          expr =
+            let
+              streamS = st {
+                host.name = "igloo";
+                val = 1;
+              };
+            in
+            (ned.topo.selectHost "missing" streamS).toList;
+          expected = [ ];
+        };
+
         # -- ned.topo.users ------------------------------------------------
 
         users.test-users-single = {
@@ -487,8 +532,7 @@
                 nixos = sources.user (ST.sel "nixos");
               };
 
-              userD = compS: compS (ned.fwd.hostUser) ned.topo.users (ned.topo.hosts topoS);
-              nixosModules = (ned.run { user = userD; } mainC).nixos.toList;
+              nixosModules = (ned.run { user = ned.fwd.hostUserFor topoS; } mainC).nixos.toList;
             in
             lib.sort (
               a: b:
@@ -503,6 +547,53 @@
             { users.users.bob.isNormalUser = true; }
             { users.users.carol.isNormalUser = true; }
             { users.users.tux.isNormalUser = true; }
+          ];
+        };
+      };
+
+      # -- ned.fwd.osConfigFor / hostUserFor --------------------------------
+
+      fwd = {
+        test-osConfigFor-host-and-osConfiguration = {
+          expr =
+            let
+              topoS = st {
+                hosts.x86_64-linux.igloo = { };
+                hosts.aarch64-linux.snow = { };
+              };
+              compS = st ({ host }: host.name);
+              items = lib.sort (a: b: a.host.name < b.host.name) (ned.fwd.osConfigFor topoS compS).toList;
+            in
+            map (item: {
+              name = item.host.name;
+              os = item.osConfiguration;
+            }) items;
+          expected = [
+            {
+              name = "igloo";
+              os = "igloo";
+            }
+            {
+              name = "snow";
+              os = "snow";
+            }
+          ];
+        };
+
+        test-hostUserFor-per-user-modules = {
+          expr =
+            let
+              topoS = st { hosts.x86_64-linux.igloo.users.tux = { }; };
+              compS = st (
+                { host, user }:
+                {
+                  description = "${host.name}/${user.name}";
+                }
+              );
+            in
+            (ned.fwd.hostUserFor topoS compS).toList;
+          expected = [
+            { nixos.users.users.tux.description = "igloo/tux"; }
           ];
         };
       };
@@ -527,8 +618,7 @@
             darwin = sources.user (ST.sel.flat "darwin");
           };
 
-          userD = compS: compS ned.fwd.hostUser ned.topo.users (ned.topo.hosts topoS);
-          sinks = ned.run { user = userD; } mainC;
+          sinks = ned.run { user = ned.fwd.hostUserFor topoS; } mainC;
         in
         {
           test-nixos-users-description = {
@@ -553,6 +643,147 @@
               in
               cfg.config.users.users.tux.description;
             expected = "venus/tux";
+          };
+        };
+
+      # -- flake configurations by class ------------------------------------
+
+      flake =
+        let
+          topoS = st {
+            hosts.x86_64-linux.igloo.users.tux = { };
+            hosts.aarch64-darwin.venus.users.tux = { };
+          };
+
+          # Component: produces config modules per host
+          hostConfigS = st (
+            { host }:
+            {
+              networking.hostName = host.name;
+              system.stateVersion = if host.class == "darwin" then 25 else 24;
+            }
+          );
+
+          # Driver: groups host configs by class
+          hostConfigGroupD =
+            compS:
+            st (
+              { host }:
+              (ned.drive.ctx { inherit host; } compS).map (attrs: {
+                ${host.class} = attrs;
+              })
+            );
+
+          # Driver: fan out hosts via topology, then group by class
+          hostConfigD = compS: compS hostConfigGroupD (ned.topo.hosts topoS);
+
+          # Cycle: groups host configs by class, builds OS configs
+          flakeC = sources: {
+            hostcfg = hostConfigS;
+            os = st (
+              { host }:
+              let
+                classModules =
+                  if host.class == "nixos" then
+                    sources.hostcfg (ST.sel.flat "nixos")
+                  else
+                    sources.hostcfg (ST.sel.flat "darwin");
+              in
+              if host.class == "nixos" then
+                inputs.nixpkgs.lib.nixosSystem {
+                  inherit (host) system;
+                  modules = classModules.toList;
+                }
+              else
+                inputs.nix-darwin.lib.darwinSystem {
+                  inherit (host) system;
+                  modules = classModules.toList;
+                }
+            );
+            flake = sources.os.flatMap (
+              item:
+              st {
+                nixosConfigurations =
+                  if item.host.class == "nixos" then st { ${item.host.name} = item.osConfiguration; } else st;
+                darwinConfigurations =
+                  if item.host.class == "darwin" then st { ${item.host.name} = item.osConfiguration; } else st;
+              }
+            );
+          };
+
+          sinks = ned.run {
+            os = ned.fwd.osConfigFor topoS;
+            hostcfg = hostConfigD;
+          } flakeC;
+          nixosConfigs = sinks.flake (ST.sel.flat "nixosConfigurations");
+          darwinConfigs = sinks.flake (ST.sel.flat "darwinConfigurations");
+        in
+        {
+          test-flake-hostconfig-values-propagate = {
+            expr = {
+              nixos = (lib.head (nixosConfigs.toList)).igloo.config.networking.hostName;
+              darwin = (lib.head (darwinConfigs.toList)).venus.config.networking.hostName;
+            };
+            expected = {
+              nixos = "igloo";
+              darwin = "venus";
+            };
+          };
+        };
+
+      # -- cross-host distribution --------------------------------
+      # igloo is key-consumer (collects keys from all hosts).
+      # SSH key derived from config.networking.hostName — a config-dependent
+      # thunk. NixOS lazy fixed-point resolves the cycle because hostName
+      # is independent of authorizedKeys.
+      cross-host-dep =
+        let
+          topoS = st {
+            hosts.x86_64-linux.igloo.keyConsumer = true;
+            hosts.x86_64-linux.iceberg = { };
+          };
+
+          # Reusable: NixOS module stream for a host
+          nixosModulesS =
+            { host, keys }:
+            let
+              baseS = st { networking.hostName = host.name; };
+            in
+            if host.keyConsumer or false then
+              baseS { users.users.root.openssh.authorizedKeys.keys = keys; }
+            else
+              baseS;
+
+          mainC = sources: {
+            os = st (
+              { host }:
+              let
+                allKeys =
+                  lib.sort lib.lessThan
+                    (sources.os.map (item: "key-${item.osConfiguration.config.networking.hostName}")).toList;
+              in
+              inputs.nixpkgs.lib.nixosSystem {
+                inherit (host) system;
+                modules =
+                  (nixosModulesS {
+                    inherit host;
+                    keys = allKeys;
+                  }).toList;
+              }
+            );
+            osItems = sources.os;
+          };
+
+          sinks = ned.run { os = ned.fwd.osConfigFor topoS; } mainC;
+          igloo = lib.head (ned.topo.selectHost "igloo" sinks.osItems).toList;
+        in
+        {
+          test-ssh-authorized-keys = {
+            expr = igloo.osConfiguration.config.users.users.root.openssh.authorizedKeys.keys;
+            expected = [
+              "key-iceberg"
+              "key-igloo"
+            ];
           };
         };
 
