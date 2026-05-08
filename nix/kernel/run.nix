@@ -14,5 +14,5 @@ let
     sinks;
 in
 {
-  priv = { inherit run; };
+  ned = { inherit run; };
 }

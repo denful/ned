@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (config.priv) wrap;
+  inherit (config.ned) wrap;
 
   # ---------------------------------------------------------------------------
   # ctxD :: bindings -> compS -> compS
@@ -59,5 +59,5 @@ let
     wrap (go compS.__stream);
 in
 {
-  priv = { inherit scopeD ctxD; };
+  ned = { inherit scopeD ctxD; };
 }

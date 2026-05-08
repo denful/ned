@@ -1,6 +1,6 @@
 { config, ... }:
 let
-  inherit (config.priv) ctxD st;
+  inherit (config.ned) ctxD st;
 
   # hostUserD :: ST comp -> ST comp
   #
@@ -19,5 +19,5 @@ let
     );
 in
 {
-  priv = { inherit hostUserD; };
+  ned = { inherit hostUserD; };
 }

@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (config.priv) wrap st ctxD;
+  inherit (config.ned) wrap st ctxD;
 
   # ---------------------------------------------------------------------------
   # topo.hosts :: ST topology -> ST comp -> ST result
@@ -57,5 +57,5 @@ let
     (wrap (fx.stream.fromList hosts)).flatMap (host: ctxD { inherit host; } compS);
 in
 {
-  priv = { inherit hostsT; };
+  ned = { inherit hostsT; };
 }

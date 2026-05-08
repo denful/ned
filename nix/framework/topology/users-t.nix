@@ -1,6 +1,6 @@
 { lib, config, ... }:
 let
-  inherit (config.priv) ctxD st;
+  inherit (config.ned) ctxD st;
 
   # ---------------------------------------------------------------------------
   # topo.users :: compS -> compS
@@ -27,5 +27,5 @@ let
     );
 in
 {
-  priv = { inherit usersT; };
+  ned = { inherit usersT; };
 }

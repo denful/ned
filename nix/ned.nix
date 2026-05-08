@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (config.priv)
+  inherit (config.ned)
     run
     st
     wrap
@@ -52,7 +52,7 @@ let
 
 in
 {
-  options.priv = lib.mkOption {
+  options.ned = lib.mkOption {
     type = lib.types.submodule {
       freeformType = lib.types.lazyAttrsOf lib.types.unspecified;
     };

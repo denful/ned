@@ -1,6 +1,6 @@
 { lib, config, ... }:
 let
-  inherit (config.priv) ctxD st;
+  inherit (config.ned) ctxD st;
 
   # osConfigD :: ST comp -> ST comp
   #
@@ -18,5 +18,5 @@ let
 
 in
 {
-  priv = { inherit osConfigD; };
+  ned = { inherit osConfigD; };
 }

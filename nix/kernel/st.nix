@@ -75,5 +75,5 @@ let
     self;
 in
 {
-  priv = { inherit wrap st; };
+  ned = { inherit wrap st; };
 }

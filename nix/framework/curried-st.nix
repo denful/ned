@@ -1,6 +1,6 @@
 { config, ... }:
 let
-  inherit (config.priv) st;
+  inherit (config.ned) st;
 in
 {
   # ---------------------------------------------------------------------------
@@ -8,7 +8,7 @@ in
   #
   # Enables point-free composition: (ST.apply "fn" arg) as a stream fn
   # ---------------------------------------------------------------------------
-  priv.ST = {
+  ned.ST = {
     __functor = _: st;
     map = f: stream: stream.map f;
     filter = p: stream: stream.filter p;
