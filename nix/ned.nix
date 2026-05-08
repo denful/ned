@@ -22,13 +22,14 @@ let
     ;
 
   # ===========================================================================
-  # CONVENTIONS — enforced throughout this file and all ned modules
+  # NAMING — enforced throughout this file and all ned modules
   #
-  #   nameS  — variable holds an ST (wrapped fx stream)
-  #   nameD  — variable holds a driver  (ST -> ST)
-  #   nameC  — variable holds a cycle   (sources -> sinks)
-  #   nameH  — variable holds fx handlers attrset
-  #   nameT  - variable holds a Topology Transformation (most likely a Driver)
+  #   All identifiers use kebab-case with type suffixes:
+  #   - name-s  — variable holds an ST (wrapped fx stream)
+  #   - name-d  — variable holds a driver  (ST -> ST)
+  #   - name-c  — variable holds a cycle   (sources -> sinks)
+  #   - name-h  — variable holds fx handlers attrset
+  #   - name-t  — variable holds a Topology Transformation
   #
   # Never call fx.stream.* directly on .__stream at a call site.
   # Use the ST fluent API (s.map, s.flatMap, s.filter, s.concat) instead.
@@ -43,11 +44,11 @@ let
     drive.scope = scope-d;
     topo.hosts = hosts-t;
     topo.users = users-t;
-    topo.selectHost = select-host-d;
-    fwd.hostUser = host-user-d;
-    fwd.osConfig = os-config-d;
-    fwd.osConfigFor = host-os-d;
-    fwd.hostUserFor = host-users-d;
+    topo.select-host = select-host-d;
+    fwd.host-user = host-user-d;
+    fwd.os-config = os-config-d;
+    fwd.os-config-for = host-os-d;
+    fwd.host-user-for = host-users-d;
   };
 
 in
