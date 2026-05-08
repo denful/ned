@@ -58,6 +58,6 @@ in
     };
   };
 
-  options.ned = lib.mkOption { };
-  config.ned = API;
+  options.API = lib.mkOption { };
+  config.API = API;
 }

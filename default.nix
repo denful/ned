@@ -11,6 +11,6 @@ in
 let
   modules = [ (import-tree ./nix) ];
   specialArgs.fx = fx;
-  ned = (lib.evalModules { inherit modules specialArgs; }).config.ned;
+  ned = (lib.evalModules { inherit modules specialArgs; }).config.API;
 in
 ned
