@@ -1,13 +1,12 @@
 {
   lib,
   ned,
-  inputs,
   ...
 }:
 {
-  config.flake.tests.st =
+  config.flake.tests.kernel.st =
     let
-      inherit (ned) st ST;
+      inherit (ned) st;
     in
     {
       test-plain-value = {
@@ -39,7 +38,7 @@
       test-stream-combinator = {
         expr =
           let
-            doubled-s = st 1 2 (ST.map (n: n * 2));
+            doubled-s = st 1 2 (st.map (n: n * 2));
           in
           doubled-s.toList;
         expected = [
@@ -56,7 +55,7 @@
               home = "cfg1";
             };
           in
-          (multi-s (ST.sub "nixos")).toList;
+          (multi-s (st.sub.value "nixos")).toList;
         expected = [ "config1" ];
       };
 
@@ -74,7 +73,7 @@
                   b = 40;
                 };
           in
-          (multi-s (ST.sub "a")).toList;
+          (multi-s (st.sub.value "a")).toList;
         expected = [
           10
           30
@@ -95,21 +94,21 @@
                   y = "qux";
                 };
           in
-          (multi-s (ST.sub "x")).toList;
+          (multi-s (st.sub.value "x")).toList;
         expected = [
           "foo"
           "baz"
         ];
       };
 
-      test-sel-flat = {
+      test-sel-substream = {
         expr =
           let
             multi-s = st {
               x = st { a = 1; } { a = 2; };
             };
           in
-          (multi-s (ST.sub.flat "x")).toList;
+          (multi-s (st.sub "x")).toList;
         expected = [
           { a = 1; }
           { a = 2; }
@@ -124,7 +123,7 @@
               v = 5;
             };
           in
-          (multi-s (ST.sub.apply "f" 5)).toList;
+          (multi-s (st.sub.apply "f" 5)).toList;
         expected = [ 10 ];
       };
     };

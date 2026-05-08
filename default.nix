@@ -1,16 +1,10 @@
 let
-  lock-inputs = import ./templates/ci/with-inputs.nix { };
+  locked = import ./templates/ci/with-inputs.nix { };
 in
 {
-  inputs ? lock-inputs,
-  lib ? (inputs.nixpkgs or lock-inputs.nixpkgs).lib,
-  fx ? import (inputs.nix-effects or lock-inputs.nix-effects) { inherit lib; },
-  import-tree ? inputs.import-tree or lock-inputs.import-tree,
+  inputs ? locked,
+  lib ? (inputs.nixpkgs or locked.nixpkgs).lib,
+  fx ? import (inputs.nix-effects or locked.nix-effects) { inherit lib; },
   ...
 }:
-let
-  modules = [ (import-tree ./nix) ];
-  specialArgs.fx = fx;
-  ned = (lib.evalModules { inherit modules specialArgs; }).config.API;
-in
-ned
+import ./kernel.nix { inherit lib fx; }

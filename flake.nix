@@ -1,5 +1,6 @@
 {
   outputs = _: {
+    lib = import ./.;
     flakeModule =
       { lib, inputs, ... }:
       {
