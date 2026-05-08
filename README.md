@@ -1,6 +1,6 @@
 # Ned - Functional Reactive Programming for Nix
 
-[`TLDR; Take me to a code example`](./templates/fleet)
+[`TLDR; Take me to a code example`](./templates/ci/modules/tests/readme)
 
 > Q: What is Ned, another [Den](https://github.com/denful/den)?  
 > A:  
@@ -15,9 +15,8 @@
 
 Ned's [kernel.nix](kernel.nix) is based on [Functional Reactive Programming](https://cycle.js.org/streams.html) principles originally from [Cycle.js and Haskell 1.0 Dialogue](https://cycle.js.org/dialogue.html). It can be used for anything you use Nix, not necessarily NixOS configurations.
 
-Ned [lib](nix/lib) provides FRP based utilities for creating NixOS configurations since that is the most common usage of the Nix language. But these are only a convenience and a way to test the kernel itself for real-world usage. You can create your own libs based on Ned's minimal kernel.
 
-A future version of Den will be based on Ned's reactive core. Allowing Den's already powerful features to be expressed with less code, and more concise ways. Like all other vic's Dendritic libraries, Ned was born as an exploration on how we can improve real-world Nix and not just take the status-quo as the only way.
+Ned [nixos test demo](templates/ci/modules/tests/nixos/simple) FRP based utilities for creating NixOS configurations since that is the most common usage of the Nix language. But these are only code examples and a way to test the kernel itself for real-world usage. You can create your own libs based on Ned's minimal kernel.
 
 ## Everything is a Stream -- Ned's core tenet
 
@@ -79,4 +78,4 @@ Each call can also apply a stream *combinator*:
 `(st 1 2 (stream: stream.map (i: i * 2)) 3).toList` evaluates to `[ 2 4 3 ]`
 
 
-Looking for examples? For now, see [tests](templates/ci/modules)
+Looking for examples? For now, see [tests](templates/ci/modules/tests)

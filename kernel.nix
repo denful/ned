@@ -22,7 +22,7 @@ let
   # ctx-s :: contextual-fn -> st
   #
   # Executes fn after effect-requests for each of its named arguments.
-  # Produces a pure computation from fn result. See fx.bind.fn and fx.rotate.
+  # Produces a singleton st from fn result. See fx.bind.fn and fx.rotate.
   # ---------------------------------------------------------------------------
   ctx-s = f: fx.stream.fromList [ (fx.bind.fn { } f) ];
 
