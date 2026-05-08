@@ -1,8 +1,11 @@
+let
+  lock-inputs = import ./templates/ci/with-inputs.nix { };
+in
 {
-  inputs ? import ./templates/ci/with-inputs.nix { },
-  lib ? inputs.nixpkgs.lib,
-  fx ? import inputs.nix-effects { inherit lib; },
-  import-tree ? inputs.import-tree,
+  inputs ? lock-inputs,
+  lib ? (inputs.nixpkgs or lock-inputs.nixpkgs).lib,
+  fx ? import (inputs.nix-effects or lock-inputs.nix-effects) { inherit lib; },
+  import-tree ? inputs.import-tree or lock-inputs.import-tree,
   ...
 }:
 let
