@@ -1,5 +1,5 @@
 {
-  pkgs ? import <nixpkgs> { },
+  pkgs ? import (import ./templates/ci/with-inputs.nix { }).nixpkgs { },
   ...
 }:
 pkgs.mkShell {

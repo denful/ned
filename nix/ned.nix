@@ -1,7 +1,5 @@
-{ lib, inputs, ... }:
+{ lib, fx, ... }:
 let
-  fx = import inputs.nix-effects { inherit lib; };
-
   # ===========================================================================
   # CONVENTIONS — enforced throughout this file and all ned modules
   #
@@ -302,6 +300,6 @@ let
 
 in
 {
-  _module.args.ned = ned;
-  _module.args.fx = fx;
+  options.ned = lib.mkOption { type = lib.types.lazyAttrsOf lib.types.unspecified; };
+  config.ned = ned;
 }
