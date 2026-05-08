@@ -1,4 +1,5 @@
-# Shows dependency-injection (via effect-rotation) by using nested effect handlers.
+# Configures a single host with a user using contextual streams.
+# For fleet example with cycle components and cross-host config see nixos/fleet.nix
 {
   lib,
   ned,
@@ -8,7 +9,7 @@
 let
   inherit (ned) run st ctx-d;
 
-  fleet = {
+  infra = {
     igloo = {
       name = "igloo";
       domain = "antartic.org";
@@ -27,7 +28,7 @@ let
   fanout-host-to-user-d =
     comp-s: { host }: (st.fromList host.users).flatMap (user: (user-d user) comp-s);
 
-  module-s = st defaults-s (host-d fleet.igloo host-module-s);
+  module-s = st defaults-s (host-d infra.igloo host-module-s);
 
   defaults-s = st {
     boot.loader.grub.enable = false;
