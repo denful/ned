@@ -36,32 +36,32 @@ Each ST call can also take a stream *combinator*:
 
 > SourceCode Refence: `ned.st`.
 > 
-> Code convention: name bindings with `S` suffix: `userS` means a users stream.
+> Code convention: name bindings with `-s` suffix: `user-s` means a users stream.
 
 
-### `Driver` :: `requestS -> responseS`
+### `Driver` :: `request-s -> response-s`
 
 A driver is just a stream transformation, we keep the name from `cycle.js` tradition. To mean, the place where _effectful computations_ happen. In Ned, Drivers are the place to install _scoped effect rotation_ on streams for dependency injection.
 
-> SourceCode Refence: `ned.scopeD`, `ned.drive.*`.
+> SourceCode Refence: `ned.scope-d`, `ned.drive.*`.
 >
-> Code convention: name bindings with `D` suffix: `scopeD` means a scope driver.
+> Code convention: name bindings with `-d` suffix: `scope-d` means a scope driver.
 
 ### `Cycle` :: `sources -> sinks`
 
 A Cycle is a function from named-streams into named-streams.
 
 ```nix
-doubleC = { x, y }: { 
+times-c = { x, y }: { 
   z = 
    (x.zip y)
    .map({ fst, snd }: fst * snd); 
 }
 ```
 
-> Code convention: name bindings with `C` suffix: `doubleC` means double cycle.
+> Code convention: name bindings with `-c` suffix: `times-c` means times cycle.
 
 
 That's it. Everything else is composition of these.
 
-> Looking for examples? For now, see tests.nix
+> Looking for examples? For now, see [tests](templates/ci/modules)
