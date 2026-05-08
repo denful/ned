@@ -24,7 +24,7 @@ let
   # Executes fn after effect-requests for each of its named arguments.
   # Produces a singleton st from fn result. See fx.bind.fn and fx.rotate.
   # ---------------------------------------------------------------------------
-  ctx-s = f: fx.stream.fromList [ (fx.bind.fn { } f) ];
+  ctx-s = f: wrap (fx.stream.fromList [ (fx.bind.fn { } f) ]);
 
   # ---------------------------------------------------------------------------
   # ctx-d :: bindings -> comp-s -> comp-s
@@ -125,7 +125,7 @@ let
             if v ? __stream then
               wrap (fx.stream.concat raw-stream v.__stream)
             else if builtins.isFunction v then
-              (if lib.functionArgs v == { } then v self else wrap (fx.stream.concat raw-stream (ctx-s v)))
+              (if lib.functionArgs v == { } then v self else self (ctx-s v))
             else
               wrap (fx.stream.concat raw-stream (fx.stream.fromList [ v ]));
 
