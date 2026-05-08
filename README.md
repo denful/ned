@@ -16,7 +16,7 @@
 Ned's [kernel.nix](kernel.nix) is based on [Functional Reactive Programming](https://cycle.js.org/streams.html) principles originally from [Cycle.js and Haskell 1.0 Dialogue](https://cycle.js.org/dialogue.html). It can be used for anything you use Nix, not necessarily NixOS configurations.
 
 
-Ned [nixos test demo](templates/ci/modules/tests/nixos/simple) FRP based utilities for creating NixOS configurations since that is the most common usage of the Nix language. But these are only code examples and a way to test the kernel itself for real-world usage. You can create your own libs based on Ned's minimal kernel.
+Ned [nixos tests](templates/ci/modules/tests/nixos) are examples of FRP based NixOS configurations since that is the most common usage of the Nix language. But these are only code examples and a way to test the kernel itself for real-world usage. You can create your own libs based on Ned's minimal kernel. Ned is _not_ a NixOS configuration framework like Den is.
 
 ## Everything is a Stream -- Ned's core tenet
 

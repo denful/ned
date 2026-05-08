@@ -81,6 +81,8 @@ let
   st = {
     __stream = fx.stream.done null;
     __functor = (wrap st.__stream).__functor;
+    fromList = list: wrap (fx.stream.fromList list);
+    toList = [ ];
     wrap = wrap;
     map = f: self: self.map f;
     filter = f: self: self.filter f;

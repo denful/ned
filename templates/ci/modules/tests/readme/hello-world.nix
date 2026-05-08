@@ -3,7 +3,6 @@
 {
   lib,
   ned,
-  ci,
   ...
 }:
 let
