@@ -20,27 +20,6 @@
         "type": "github"
       }
     },
-    "home-manager_2": {
-      "inputs": {
-        "nixpkgs": [
-          "ned",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1778009629,
-        "narHash": "sha256-nUoQtf4Zq7DRYJrfv904hjrxjAlWVP6a1pNNFKx3FCg=",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "00ed86e58bb6979a7921859fd1615d19382eac5c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "type": "github"
-      }
-    },
     "import-tree": {
       "locked": {
         "lastModified": 1773693634,
@@ -56,35 +35,13 @@
         "type": "github"
       }
     },
-    "import-tree_2": {
-      "locked": {
-        "lastModified": 1773693634,
-        "narHash": "sha256-BtZ2dtkBdSUnFPPFc+n0kcMbgaTxzFNPv2iaO326Ffg=",
-        "owner": "denful",
-        "repo": "import-tree",
-        "rev": "c41e7d58045f9057880b0d85e1152d6a4430dbf1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "denful",
-        "repo": "import-tree",
-        "type": "github"
-      }
-    },
     "ned": {
-      "inputs": {
-        "home-manager": "home-manager_2",
-        "import-tree": "import-tree_2",
-        "nix-darwin": "nix-darwin",
-        "nix-effects": "nix-effects",
-        "nixpkgs": "nixpkgs"
-      },
       "locked": {
-        "lastModified": 1778197689,
-        "narHash": "sha256-KIADiMz4YXfI+OMBR0XLPAanQKbvw+tNi9W5rTR8DSQ=",
+        "lastModified": 1778206389,
+        "narHash": "sha256-N13oB5jzkqZRpn74OmZj0GkSpM8P1+oVBMjyHanmIPE=",
         "owner": "denful",
         "repo": "ned",
-        "rev": "fa54a19ca00eff4a891d96894a49697eef2be3be",
+        "rev": "461c012e28c2bd751179c45ddf7e7196c62fd274",
         "type": "github"
       },
       "original": {
@@ -94,27 +51,6 @@
       }
     },
     "nix-darwin": {
-      "inputs": {
-        "nixpkgs": [
-          "ned",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1777780666,
-        "narHash": "sha256-8wURyQMdDkGUarSTKOGdCuFfYiwa3HbzwscUfn3STDE=",
-        "owner": "nix-darwin",
-        "repo": "nix-darwin",
-        "rev": "8c62fba0854ba15c8917aed18894dbccb48a3777",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-darwin",
-        "repo": "nix-darwin",
-        "type": "github"
-      }
-    },
-    "nix-darwin_2": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
@@ -151,40 +87,7 @@
         "type": "github"
       }
     },
-    "nix-effects_2": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1777984470,
-        "narHash": "sha256-FOLBjScQwlHPhoHkaCQkAibwd6DR5+geM7fEhrw7saM=",
-        "owner": "denful",
-        "repo": "nix-effects",
-        "rev": "44b08c3d50ce5778d59e74ae1f11243ca1cf9df1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "denful",
-        "ref": "push-pyplsuktytks",
-        "repo": "nix-effects",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
-      "locked": {
-        "lastModified": 1777946660,
-        "narHash": "sha256-iw3XDIG6xxk+AZTcawCLHf6i9i4tXRzLZEoV9xhRToQ=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "bc57abace07689cfd34203aa5fb4027514895987",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_2": {
       "locked": {
         "lastModified": 1777946660,
         "narHash": "sha256-iw3XDIG6xxk+AZTcawCLHf6i9i4tXRzLZEoV9xhRToQ=",
@@ -205,9 +108,9 @@
         "home-manager": "home-manager",
         "import-tree": "import-tree",
         "ned": "ned",
-        "nix-darwin": "nix-darwin_2",
-        "nix-effects": "nix-effects_2",
-        "nixpkgs": "nixpkgs_2",
+        "nix-darwin": "nix-darwin",
+        "nix-effects": "nix-effects",
+        "nixpkgs": "nixpkgs",
         "with-inputs": "with-inputs"
       }
     },
