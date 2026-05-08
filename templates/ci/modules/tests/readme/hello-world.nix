@@ -10,8 +10,14 @@ let
   inherit (ned) run st ctx-d;
 
   # language contextual drivers
-  en-d = ctx-d { hello = "hello"; world = "world"; };
-  sp-d = ctx-d { hello = "hola"; world = "mundo"; };
+  en-d = ctx-d {
+    hello = "hello";
+    world = "world";
+  };
+  sp-d = ctx-d {
+    hello = "hola";
+    world = "mundo";
+  };
 
   # stream of contextual computations
   comp-s = middle: st ({ hello }: hello) middle ({ world }: world) ({ hello }: hello);
