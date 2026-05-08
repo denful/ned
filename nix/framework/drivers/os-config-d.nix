@@ -20,5 +20,3 @@ in
 {
   priv = { inherit osConfigD; };
 }
-
-

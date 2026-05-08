@@ -4,28 +4,6 @@ let
   st = wrap (fx.stream.done null);
 
   # ---------------------------------------------------------------------------
-  # ST :: namespace of curried stream combinators (stream as last param)
-  #
-  # Enables point-free composition: (ST.apply "fn" arg) as a stream fn
-  # ---------------------------------------------------------------------------
-  ST = {
-    __functor = _: st;
-    map = f: stream: stream.map f;
-    filter = p: stream: stream.filter p;
-    concat = otherS: stream: stream.concat otherS;
-    flatMap = f: stream: stream.flatMap f;
-    sub = {
-      __functor =
-        _: name: stream:
-        stream.sub name;
-      apply =
-        name: value: stream:
-        stream.sub.apply name value;
-      flat = name: stream: stream.sub.flat name;
-    };
-  };
-
-  # ---------------------------------------------------------------------------
   # wrap :: fx.stream -> ST
   #
   # Wraps a raw fx.stream as an ST with a fluent functor API.
@@ -97,5 +75,5 @@ let
     self;
 in
 {
-  priv = { inherit wrap st ST; };
+  priv = { inherit wrap st; };
 }

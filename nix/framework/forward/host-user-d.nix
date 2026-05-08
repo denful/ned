@@ -17,7 +17,7 @@ let
         };
       })
     );
-in 
+in
 {
   priv = { inherit hostUserD; };
 }
