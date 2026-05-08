@@ -5,37 +5,37 @@
   ...
 }:
 let
-  inherit (config.ned) wrap st ctxD;
+  inherit (config.ned) wrap st ctx-d;
 
   # ---------------------------------------------------------------------------
   # topo.hosts :: ST topology -> ST comp -> ST result
   #
   # Fan-out driver over topology hosts.
-  # Topology shape: { hosts.${system}.${name} = { ...hostAttrs... }; }
+  # Topology shape: { hosts.${system}.${name} = { ...host-attrs... }; }
   #
-  # Builds host objects: { name, system } // hostAttrs
+  # Builds host objects: { name, system } // host-attrs
   # Merges host attrs across topologies by (system, name)
-  # Scopes compS with { host = hostObj; } via ctxD per host.
+  # Scopes comp-s with { host = hostObj; } via ctx-d per host.
   # Concatenates all per-host result streams — never materialises to list.
   # ---------------------------------------------------------------------------
-  hostsT =
-    topoS: compS:
+  hosts-t =
+    topo-s: comp-s:
     let
-      topologies = topoS.toList;
-      hostsByKey = lib.foldl' (
+      topologies = topo-s.toList;
+      hosts-by-key = lib.foldl' (
         acc: topo:
         lib.foldlAttrs (
-          acc2: sys: sysAttrs:
+          acc2: sys: sys-attrs:
           lib.foldlAttrs (
-            acc3: name: hostAttrs:
+            acc3: name: host-attrs:
             let
               key = "${sys}/${name}";
             in
             acc3
             // {
-              ${key} = if acc3 ? ${key} then lib.recursiveUpdate acc3.${key} hostAttrs else hostAttrs;
+              ${key} = if acc3 ? ${key} then lib.recursiveUpdate acc3.${key} host-attrs else host-attrs;
             }
-          ) acc2 sysAttrs
+          ) acc2 sys-attrs
         ) acc (topo.hosts or { })
       ) { } topologies;
 
@@ -44,18 +44,18 @@ let
         let
           parts = lib.splitString "/" key;
           system = builtins.elemAt parts 0;
-          hostAttrs = hostsByKey.${key};
+          host-attrs = hosts-by-key.${key};
         in
         {
           name = builtins.elemAt parts 1;
           inherit system;
-          class = hostAttrs.class or (if lib.hasSuffix "darwin" system then "darwin" else "nixos");
+          class = host-attrs.class or (if lib.hasSuffix "darwin" system then "darwin" else "nixos");
         }
-        // hostAttrs
-      ) (builtins.attrNames hostsByKey);
+        // host-attrs
+      ) (builtins.attrNames hosts-by-key);
     in
-    (wrap (fx.stream.fromList hosts)).flatMap (host: ctxD { inherit host; } compS);
+    (wrap (fx.stream.fromList hosts)).flatMap (host: ctx-d { inherit host; } comp-s);
 in
 {
-  ned = { inherit hostsT; };
+  ned = { inherit hosts-t; };
 }

@@ -1,22 +1,23 @@
 { lib, config, ... }:
 let
-  inherit (config.ned) ctxD st;
+  inherit (config.ned) ctx-d st;
 
-  # osConfigD :: ST comp -> ST comp
+  # os-config-d :: ST comp -> ST comp
   #
   # Contextual driver: reads active host scope, applies component to build
   # osConfiguration (via nixpkgs.lib.nixosSystem or nix-darwin.lib.darwinSystem).
   # Maps result to { host, osConfiguration } for downstream grouping.
-  osConfigD =
-    compS:
+  os-config-d =
+    comp-s:
     st (
       { host }:
-      (ctxD { inherit host; } compS).map (osConfiguration: {
-        inherit host osConfiguration;
+      (ctx-d { inherit host; } comp-s).map (os-configuration: {
+        inherit host;
+        inherit os-configuration;
       })
     );
 
 in
 {
-  ned = { inherit osConfigD; };
+  ned = { inherit os-config-d; };
 }

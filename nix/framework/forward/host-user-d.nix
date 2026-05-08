@@ -1,17 +1,17 @@
 { config, ... }:
 let
-  inherit (config.ned) ctxD st;
+  inherit (config.ned) ctx-d st;
 
-  # hostUserD :: ST comp -> ST comp
+  # host-user-d :: ST comp -> ST comp
   #
   # Driver: reads active host+user scope, maps each config item to
   # { <host.class>.users.users.<user.name> = attrs }. Class-agnostic —
   # works for nixos, darwin, or any host class without modification.
-  hostUserD =
-    compS:
+  host-user-d =
+    comp-s:
     st (
       { host, user }:
-      (ctxD { inherit host user; } compS).map (attrs: {
+      (ctx-d { inherit host user; } comp-s).map (attrs: {
         ${host.class} = {
           users.users.${user.name} = attrs;
         };
@@ -19,5 +19,5 @@ let
     );
 in
 {
-  ned = { inherit hostUserD; };
+  ned = { inherit host-user-d; };
 }

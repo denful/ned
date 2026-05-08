@@ -10,15 +10,15 @@ let
     st
     wrap
     ST
-    scopeD
-    ctxD
-    hostsT
-    usersT
-    hostUserD
-    hostUsersD
-    selectHostD
-    osConfigD
-    hostOsD
+    scope-d
+    ctx-d
+    hosts-t
+    users-t
+    host-user-d
+    host-users-d
+    select-host-d
+    os-config-d
+    host-os-d
     ;
 
   # ===========================================================================
@@ -39,15 +39,15 @@ let
 
   API = {
     inherit ST st run;
-    drive.ctx = ctxD;
-    drive.scope = scopeD;
-    topo.hosts = hostsT;
-    topo.users = usersT;
-    topo.selectHost = selectHostD;
-    fwd.hostUser = hostUserD;
-    fwd.osConfig = osConfigD;
-    fwd.osConfigFor = hostOsD;
-    fwd.hostUserFor = hostUsersD;
+    drive.ctx = ctx-d;
+    drive.scope = scope-d;
+    topo.hosts = hosts-t;
+    topo.users = users-t;
+    topo.selectHost = select-host-d;
+    fwd.hostUser = host-user-d;
+    fwd.osConfig = os-config-d;
+    fwd.osConfigFor = host-os-d;
+    fwd.hostUserFor = host-users-d;
   };
 
 in

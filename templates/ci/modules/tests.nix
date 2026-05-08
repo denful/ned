@@ -566,7 +566,7 @@
             in
             map (item: {
               name = item.host.name;
-              os = item.osConfiguration;
+              os = item.os-configuration;
             }) items;
           expected = [
             {
@@ -704,9 +704,9 @@
               item:
               st {
                 nixosConfigurations =
-                  if item.host.class == "nixos" then st { ${item.host.name} = item.osConfiguration; } else st;
+                  if item.host.class == "nixos" then st { ${item.host.name} = item.os-configuration; } else st;
                 darwinConfigurations =
-                  if item.host.class == "darwin" then st { ${item.host.name} = item.osConfiguration; } else st;
+                  if item.host.class == "darwin" then st { ${item.host.name} = item.os-configuration; } else st;
               }
             );
           };
@@ -760,7 +760,7 @@
               let
                 allKeys =
                   lib.sort lib.lessThan
-                    (sources.os.map (item: "key-${item.osConfiguration.config.networking.hostName}")).toList;
+                    (sources.os.map (item: "key-${item.os-configuration.config.networking.hostName}")).toList;
               in
               inputs.nixpkgs.lib.nixosSystem {
                 inherit (host) system;
@@ -779,7 +779,7 @@
         in
         {
           test-ssh-authorized-keys = {
-            expr = igloo.osConfiguration.config.users.users.root.openssh.authorizedKeys.keys;
+            expr = igloo.os-configuration.config.users.users.root.openssh.authorizedKeys.keys;
             expected = [
               "key-iceberg"
               "key-igloo"

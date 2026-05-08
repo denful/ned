@@ -18,28 +18,28 @@ let
   # callers never need to touch .__stream.
   # ---------------------------------------------------------------------------
   wrap =
-    rawStream:
+    raw-stream:
     let
       self = {
-        __stream = rawStream;
+        __stream = raw-stream;
 
         __functor =
           _: v:
           if v ? __stream then
-            wrap (fx.stream.concat rawStream v.__stream)
+            wrap (fx.stream.concat raw-stream v.__stream)
           else if builtins.isFunction v then
             (
               if lib.functionArgs v == { } then
                 v self
               else
-                wrap (fx.stream.concat rawStream (fx.stream.fromList [ (fx.bind.fn { } v) ]))
+                wrap (fx.stream.concat raw-stream (fx.stream.fromList [ (fx.bind.fn { } v) ]))
             )
           else
-            wrap (fx.stream.concat rawStream (fx.stream.fromList [ v ]));
+            wrap (fx.stream.concat raw-stream (fx.stream.fromList [ v ]));
 
-        map = f: wrap (fx.stream.map f rawStream);
-        filter = p: wrap (fx.stream.filter p rawStream);
-        concat = otherS: wrap (fx.stream.concat rawStream otherS.__stream);
+        map = f: wrap (fx.stream.map f raw-stream);
+        filter = p: wrap (fx.stream.filter p raw-stream);
+        concat = other-s: wrap (fx.stream.concat raw-stream other-s.__stream);
 
         flatMap =
           f:
@@ -50,26 +50,26 @@ let
                 r = f x;
               in
               if r ? __stream then r.__stream else r
-            ) rawStream
+            ) raw-stream
           );
 
         sub = {
-          __functor = _: name: wrap (fx.stream.map (attrs: attrs.${name}) rawStream);
-          apply = name: arg: wrap (fx.stream.map (attrs: attrs.${name} arg) rawStream);
+          __functor = _: name: wrap (fx.stream.map (attrs: attrs.${name}) raw-stream);
+          apply = name: arg: wrap (fx.stream.map (attrs: attrs.${name} arg) raw-stream);
           flat =
             name:
             wrap (
               fx.stream.flatMap (
                 attrs:
                 let
-                  rawOrWrapped = attrs.${name} or st;
+                  raw-or-wrapped = attrs.${name} or st;
                 in
-                if rawOrWrapped ? __stream then rawOrWrapped.__stream else fx.stream.fromList [ rawOrWrapped ]
-              ) rawStream
+                if raw-or-wrapped ? __stream then raw-or-wrapped.__stream else fx.stream.fromList [ raw-or-wrapped ]
+              ) raw-stream
             );
         };
 
-        toList = (fx.handle { handlers = { }; } (fx.stream.toList rawStream)).value;
+        toList = (fx.handle { handlers = { }; } (fx.stream.toList raw-stream)).value;
       };
     in
     self;

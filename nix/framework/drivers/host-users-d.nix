@@ -1,9 +1,9 @@
 { config, ... }:
 let
-  inherit (config.ned) hostUserD hostsT usersT;
+  inherit (config.ned) host-user-d hosts-t users-t;
 in
 {
-  # hostUsersD :: topoS -> ST comp -> ST
-  # Driver factory: fans out hosts then users from topoS, maps output per user.
-  ned.hostUsersD = topoS: compS: hostsT topoS (usersT (hostUserD compS));
+  # host-users-d :: topo-s -> ST comp -> ST
+  # Driver factory: fans out hosts then users from topo-s, maps output per user.
+  ned.host-users-d = topo-s: comp-s: hosts-t topo-s (users-t (host-user-d comp-s));
 }

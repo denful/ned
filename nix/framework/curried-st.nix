@@ -12,7 +12,7 @@ in
     __functor = _: st;
     map = f: stream: stream.map f;
     filter = p: stream: stream.filter p;
-    concat = otherS: stream: stream.concat otherS;
+    concat = other-s: stream: stream.concat other-s;
     flatMap = f: stream: stream.flatMap f;
     sub = {
       __functor =

@@ -8,12 +8,12 @@ let
   inherit (config.ned) wrap;
 
   # ---------------------------------------------------------------------------
-  # ctxD :: bindings -> compS -> compS
+  # ctx-d :: bindings -> comp-s -> comp-s
   #
   # Provides constant context values to a stream of contextual computations.
-  # Each computation in compS is run with bindings as named effects.
+  # Each computation in comp-s is run with bindings as named effects.
   # ---------------------------------------------------------------------------
-  ctxD = bindings: scopeD (fx.effects.scope.handlersFromAttrs bindings);
+  ctx-d = bindings: scope-d (fx.effects.scope.handlersFromAttrs bindings);
 
   # ---------------------------------------------------------------------------
   # scopeD :: handlers -> compS -> compS
@@ -21,21 +21,21 @@ let
   # Provides constant context values to a stream of contextual computations.
   # Each computation in compS is run with bindings as named effects.
   # ---------------------------------------------------------------------------
-  scopeD =
-    handlers: compS:
+  scope-d =
+    handlers: comp-s:
     let
       rot = fx.rotate {
         inherit handlers;
         return = value: _state: value;
       };
-      walkRot =
+      walk-rot =
         stream:
         fx.bind (rot stream) (
           step:
           if step._tag == "Done" then
             fx.stream.done step.value
           else
-            fx.stream.more step.head (walkRot step.tail)
+            fx.stream.more step.head (walk-rot step.tail)
         );
       go =
         stream:
@@ -52,12 +52,12 @@ let
               let
                 inner = if val ? __stream then val.__stream else fx.stream.fromList [ val ];
               in
-              fx.stream.concat (walkRot inner) (go step.tail)
+              fx.stream.concat (walk-rot inner) (go step.tail)
             )
         );
     in
-    wrap (go compS.__stream);
+    wrap (go comp-s.__stream);
 in
 {
-  ned = { inherit scopeD ctxD; };
+  ned = { inherit scope-d ctx-d; };
 }
