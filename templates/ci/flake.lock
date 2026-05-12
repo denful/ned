@@ -87,6 +87,21 @@
         "type": "github"
       }
     },
+    "nix-maid": {
+      "locked": {
+        "lastModified": 1775372244,
+        "narHash": "sha256-pLCCqY/0JC7QdWqyEyDEvGl63f9aS8zrFLVJW7gUMKI=",
+        "owner": "viperML",
+        "repo": "nix-maid",
+        "rev": "993d95a0a5b2f4b06faa022b32112b699ca3bbfd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "viperML",
+        "repo": "nix-maid",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1777946660,
@@ -110,6 +125,7 @@
         "ned": "ned",
         "nix-darwin": "nix-darwin",
         "nix-effects": "nix-effects",
+        "nix-maid": "nix-maid",
         "nixpkgs": "nixpkgs",
         "with-inputs": "with-inputs"
       }

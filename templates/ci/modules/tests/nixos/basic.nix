@@ -26,7 +26,7 @@ let
 
   # contextual driver, fanouts computation stream per each host user.
   fanout-host-to-user-d =
-    comp-s: { host }: (st.fromList host.users).flatMap (user: (user-d user) comp-s);
+    comp-s: { host }: (st.fromList host.users) (st.flatMap (user: (user-d user) comp-s));
 
   module-s = st defaults-s (host-d infra.igloo host-module-s);
 

@@ -1,3 +1,14 @@
+<p align="right">
+  <a href="https://dendritic.oeiuwq.com/sponsor"><img src="https://img.shields.io/badge/sponsor-vic-white?logo=githubsponsors&logoColor=white&labelColor=%23FF0000" alt="Sponsor Vic"/></a>
+  <a href="https://deepwiki.com/denful/ned"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+  <a href="https://github.com/denful/den/releases"><img src="https://img.shields.io/github/v/release/denful/ned?style=plastic&logo=github&color=purple"/></a>
+  <a href="https://dendritic.oeiuwq.com"><img src="https://img.shields.io/badge/Dendritic-Nix-informational?logo=nixos&logoColor=white" alt="Dendritic Nix"/></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/denful/ned" alt="License"/></a>
+  <a href="https://github.com/denful/ned/actions"><img src="https://github.com/denful/ned/actions/workflows/test.yml/badge.svg" alt="CI Status"/></a>
+</p>
+
+> ned and [vic](https://bsky.app/profile/oeiuwq.bsky.social)'s [dendritic libs](https://dendritic.oeiuwq.com) made for you with Love++ and AI--. If you like my work, consider [sponsoring](https://dendritic.oeiuwq.com/sponsor)
+
 # Ned - Functional Reactive Programming for Nix
 
 Ned is a minimal [kernel.nix](kernel.nix) that brings [stream-based](https://cycle.js.org/streams.html) functional-reactive programming into Nix.

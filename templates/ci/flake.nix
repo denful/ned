@@ -18,5 +18,7 @@
 
     nix-darwin.url = "github:nix-darwin/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+
+    nix-maid.url = "github:viperML/nix-maid";
   };
 }
