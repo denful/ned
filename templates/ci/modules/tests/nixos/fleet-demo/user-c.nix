@@ -2,14 +2,16 @@
 let
   inherit (ned) map-c;
 
-  ssh-module = { host, user }: {
-    hostName = host.name;
-    userName = user.name;
-    module   = {
-      isNormalUser                    = true;
-      openssh.authorizedKeys.keys     = user.ssh-keys;
+  ssh-module =
+    { host, user }:
+    {
+      hostName = host.name;
+      userName = user.name;
+      module = {
+        isNormalUser = true;
+        openssh.authorizedKeys.keys = user.ssh-keys;
+      };
     };
-  };
 in
 {
   # user-c :: ST {host, user} -> ST {hostName, userName, module}

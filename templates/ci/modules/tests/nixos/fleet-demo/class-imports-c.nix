@@ -12,9 +12,13 @@ in
   # Derives emitting hostNames from class-stream, then uses when-c to inject
   # the nixos-module once per host that has class emissions.
   # Hosts with no class emissions produce no output — module not imported.
-  fleet-demo.class-imports-c = nixos-module: class-stream: host-stream:
+  fleet-demo.class-imports-c =
+    nixos-module: class-stream: host-stream:
     let
       emitting = lib.genAttrs (map (e: e.hostName) class-stream.toList) (_: true);
     in
-    when-c (h: emitting ? ${h.name}) host-stream (h: { hostName = h.name; module = nixos-module; });
+    when-c (h: emitting ? ${h.name}) host-stream (h: {
+      hostName = h.name;
+      module = nixos-module;
+    });
 }

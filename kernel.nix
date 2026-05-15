@@ -58,7 +58,9 @@ let
   # The predicate plays the role of Den's guard: it receives one stream
   # item (the "scope" in Den's terms) and returns bool. If false, item
   # is dropped — equivalent to Den deferring a guard that doesn't pass.
-  when-c = pred: stream: f: (stream (st.filter pred)) (st.map f);
+  when-c =
+    pred: stream: f:
+    (stream (st.filter pred)) (st.map f);
 
   # fanout-d :: stream -> ctx-fn -> comp-s -> st
   #
@@ -124,7 +126,9 @@ let
     forList = xs: f: (st.fromList xs) (st.flatMap f);
     # filterList :: (a -> bool) -> [a] -> (a -> ST b) -> ST b
     # Filter xs by pred, then fan out via f. Composes filter + forList.
-    filterList = pred: xs: f: st.forList (builtins.filter pred xs) f;
+    filterList =
+      pred: xs: f:
+      st.forList (builtins.filter pred xs) f;
     # select :: (a -> bool) -> ST a -> [a]
     # Filter stream to list in one step. Common collect-by-predicate pattern.
     select = pred: stream: (stream (st.filter pred)).toList;
@@ -132,11 +136,12 @@ let
     # Group source by key-fn; iterate each item with its group-peers in scope.
     # Core mechanism for env-scoped pipes: siblings see each other's data.
     # Used as juxtaposition combinator: source (st.withPeers key-fn f)
-    withPeers = key-fn: f: source-st:
-      let by-key = lib.groupBy key-fn source-st.toList;
-      in st.forList (builtins.attrValues by-key) (peers:
-        st.forList peers (f peers)
-      );
+    withPeers =
+      key-fn: f: source-st:
+      let
+        by-key = lib.groupBy key-fn source-st.toList;
+      in
+      st.forList (builtins.attrValues by-key) (peers: st.forList peers (f peers));
     toList = [ ];
     wrap = wrap;
     map = f: self: self.map f;
@@ -151,14 +156,30 @@ let
     # dedup :: (a -> key) -> ST a -> ST a
     # Drop items whose key was already seen. Keeps first occurrence.
     # Uses scanl to track seen keys; flatMap emits item or nothing.
-    dedup = key-fn: stream:
+    dedup =
+      key-fn: stream:
       let
-        step = state: item:
-          let k = key-fn item;
-          in if builtins.elem k state.seen
-             then { seen = state.seen; emit = []; }
-             else { seen = state.seen ++ [ k ]; emit = [ item ]; };
-        states = stream (st.scanl step { seen = []; emit = []; });
+        step =
+          state: item:
+          let
+            k = key-fn item;
+          in
+          if builtins.elem k state.seen then
+            {
+              seen = state.seen;
+              emit = [ ];
+            }
+          else
+            {
+              seen = state.seen ++ [ k ];
+              emit = [ item ];
+            };
+        states = stream (
+          st.scanl step {
+            seen = [ ];
+            emit = [ ];
+          }
+        );
       in
       states (st.flatMap (s: st.fromList s.emit));
 
@@ -177,13 +198,22 @@ let
     get =
       f: self:
       let
-        isLens = builtins.isAttrs f && f ? get && f ? set && builtins.isFunction f.get && builtins.isFunction f.set && !(f ? __stream) && !(f ? toList);
+        isLens =
+          builtins.isAttrs f
+          && f ? get
+          && f ? set
+          && builtins.isFunction f.get
+          && builtins.isFunction f.set
+          && !(f ? __stream)
+          && !(f ? toList);
       in
       if isLens then self f else self.filter f;
 
     # set :: lens -> value -> ST -> ST
     # For each element s: lens.set s value — works with any { get, set } lens.
-    set = lens: value: self: self.map (s: lens.set s value);
+    set =
+      lens: value: self:
+      self.map (s: lens.set s value);
   };
 
   # ---------------------------------------------------------------------------
@@ -212,12 +242,18 @@ let
           name: mapper: wrap (fx.stream.map mapper (fx.stream.filter (x: x ? ${name}) raw-stream));
 
         # Protocol detection: any { get, set } lens — library-agnostic.
-        isLens = v: builtins.isAttrs v && v ? get && v ? set && builtins.isFunction v.get && builtins.isFunction v.set && !(v ? __stream) && !(v ? toList);
+        isLens =
+          v:
+          builtins.isAttrs v
+          && v ? get
+          && v ? set
+          && builtins.isFunction v.get
+          && builtins.isFunction v.set
+          && !(v ? __stream)
+          && !(v ? toList);
 
         # Apply lens.get to each stream element → stream of Either.
-        applyLensToStream = lens: wrap (
-          fx.stream.map (x: lens.get x) raw-stream
-        );
+        applyLensToStream = lens: wrap (fx.stream.map (x: lens.get x) raw-stream);
 
         self = {
           __stream = raw-stream;

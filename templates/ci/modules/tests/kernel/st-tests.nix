@@ -21,23 +21,25 @@
 
       # Lenses for field access patterns
       field-lens = name: {
-        get = obj:
-          if obj ? ${name} then
-            { right = obj.${name}; }
-          else
-            { left = "field '${name}' not found"; };
-        set = obj: v:
-          { right = obj // { ${name} = v; }; };
+        get =
+          obj: if obj ? ${name} then { right = obj.${name}; } else { left = "field '${name}' not found"; };
+        set = obj: v: {
+          right = obj // {
+            ${name} = v;
+          };
+        };
       };
 
       # Lens for function application
       apply-fn-lens = fnName: arg: {
-        get = obj:
+        get =
+          obj:
           if obj ? ${fnName} then
             { right = obj.${fnName} arg; }
           else
             { left = "function '${fnName}' not found"; };
-        set = obj: _v:
+        set =
+          obj: _v:
           if obj ? ${fnName} then
             { right = obj.${fnName} arg; }
           else
@@ -173,7 +175,11 @@
           in
           result-s.toList;
         expected = [
-          { right = { value = 42; }; }
+          {
+            right = {
+              value = 42;
+            };
+          }
         ];
       };
 
@@ -196,9 +202,7 @@
         expr =
           let
             # Lens that may return errors (left values)
-            validate-lens = prism
-              (v: v)
-              (v: if v > 10 then { right = v; } else { left = "too small"; });
+            validate-lens = prism (v: v) (v: if v > 10 then { right = v; } else { left = "too small"; });
             result-s = st 5 15 3 20 (validate-lens);
           in
           result-s.left.toList;
@@ -212,7 +216,9 @@
         # attrset without .set is NOT a lens — emitted as plain value
         expr =
           let
-            not-a-lens = { get = 42; };
+            not-a-lens = {
+              get = 42;
+            };
             result-s = st 5 (not-a-lens);
           in
           result-s.toList;
@@ -254,22 +260,50 @@
       # when-c: Den policy.when equivalent
       test-when-c-filters-and-maps = {
         expr =
-          let stream = st.fromList [ 1 2 3 4 5 ];
-          in (when-c (x: x > 3) stream (x: x * 10)).toList;
-        expected = [ 40 50 ];
+          let
+            stream = st.fromList [
+              1
+              2
+              3
+              4
+              5
+            ];
+          in
+          (when-c (x: x > 3) stream (x: x * 10)).toList;
+        expected = [
+          40
+          50
+        ];
       };
 
       test-when-c-none-match = {
         expr =
-          let stream = st.fromList [ 1 2 3 ];
-          in (when-c (x: x > 10) stream (x: x * 10)).toList;
+          let
+            stream = st.fromList [
+              1
+              2
+              3
+            ];
+          in
+          (when-c (x: x > 10) stream (x: x * 10)).toList;
         expected = [ ];
       };
 
       test-when-c-all-match = {
         expr =
-          let stream = st.fromList [ { name = "lb"; role = "lb"; } { name = "web"; role = "web"; } ];
-          in (when-c (h: h.role == "lb") stream (h: h.name)).toList;
+          let
+            stream = st.fromList [
+              {
+                name = "lb";
+                role = "lb";
+              }
+              {
+                name = "web";
+                role = "web";
+              }
+            ];
+          in
+          (when-c (h: h.role == "lb") stream (h: h.name)).toList;
         expected = [ "lb" ];
       };
 
@@ -279,9 +313,22 @@
       test-when-c-external-pred = {
         expr =
           let
-            roles  = st.fromList [ "lb" "web" "web" ];
+            roles = st.fromList [
+              "lb"
+              "web"
+              "web"
+            ];
             has-lb = builtins.elem "lb" roles.toList;
-            hosts  = st.fromList [ { name = "lb-prod"; role = "lb"; } { name = "web-1"; role = "web"; } ];
+            hosts = st.fromList [
+              {
+                name = "lb-prod";
+                role = "lb";
+              }
+              {
+                name = "web-1";
+                role = "web";
+              }
+            ];
           in
           (when-c (h: has-lb && h.role == "web") hosts (h: h.name)).toList;
         expected = [ "web-1" ];
@@ -291,10 +338,22 @@
       test-when-c-composed = {
         expr =
           let
-            hosts  = st.fromList [
-              { name = "lb";  env = "prod";    role = "lb";  }
-              { name = "w1";  env = "prod";    role = "web"; }
-              { name = "w2";  env = "staging"; role = "web"; }
+            hosts = st.fromList [
+              {
+                name = "lb";
+                env = "prod";
+                role = "lb";
+              }
+              {
+                name = "w1";
+                env = "prod";
+                role = "web";
+              }
+              {
+                name = "w2";
+                env = "staging";
+                role = "web";
+              }
             ];
             prod-webs = when-c (h: h.env == "prod" && h.role == "web") hosts (h: h.name);
           in
@@ -305,20 +364,41 @@
       # st.dedup: drop items with duplicate keys, keep first occurrence
       test-dedup-by-identity = {
         expr = (st.fromList [ 1 2 1 3 2 ] (st.dedup (x: x))).toList;
-        expected = [ 1 2 3 ];
+        expected = [
+          1
+          2
+          3
+        ];
       };
 
       test-dedup-by-key = {
         expr =
-          let items = [
-            { name = "a"; v = 1; }
-            { name = "b"; v = 2; }
-            { name = "a"; v = 99; }
-          ];
-          in (st.fromList items (st.dedup (x: x.name))).toList;
+          let
+            items = [
+              {
+                name = "a";
+                v = 1;
+              }
+              {
+                name = "b";
+                v = 2;
+              }
+              {
+                name = "a";
+                v = 99;
+              }
+            ];
+          in
+          (st.fromList items (st.dedup (x: x.name))).toList;
         expected = [
-          { name = "a"; v = 1; }
-          { name = "b"; v = 2; }
+          {
+            name = "a";
+            v = 1;
+          }
+          {
+            name = "b";
+            v = 2;
+          }
         ];
       };
 
@@ -329,7 +409,11 @@
 
       test-dedup-all-unique = {
         expr = (st.fromList [ 1 2 3 ] (st.dedup (x: x))).toList;
-        expected = [ 1 2 3 ];
+        expected = [
+          1
+          2
+          3
+        ];
       };
 
       test-dedup-all-same = {
@@ -340,9 +424,25 @@
       # st.flatten: merge stream-of-streams into one stream
       test-flatten-two-streams = {
         expr =
-          let outer = st.fromList [ (st.fromList [ 1 2 ]) (st.fromList [ 3 4 ]) ];
-          in (st.flatten outer).toList;
-        expected = [ 1 2 3 4 ];
+          let
+            outer = st.fromList [
+              (st.fromList [
+                1
+                2
+              ])
+              (st.fromList [
+                3
+                4
+              ])
+            ];
+          in
+          (st.flatten outer).toList;
+        expected = [
+          1
+          2
+          3
+          4
+        ];
       };
 
       test-flatten-empty-outer = {
@@ -352,9 +452,22 @@
 
       test-flatten-some-empty-inner = {
         expr =
-          let outer = st.fromList [ (st.fromList [ 1 ]) st (st.fromList [ 2 3 ]) ];
-          in (st.flatten outer).toList;
-        expected = [ 1 2 3 ];
+          let
+            outer = st.fromList [
+              (st.fromList [ 1 ])
+              st
+              (st.fromList [
+                2
+                3
+              ])
+            ];
+          in
+          (st.flatten outer).toList;
+        expected = [
+          1
+          2
+          3
+        ];
       };
     };
 }
