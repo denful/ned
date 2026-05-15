@@ -41,6 +41,13 @@ let
   # Canonical way to turn static data into a source stream.
   static-d = items: _: st.fromList items;
 
+  # collect-d :: ST a -> ST [ a ]
+  #
+  # Driver that collects all incoming items and produces a singleton
+  # stream with all those items as a list.
+  # Useful to use a sink as collector and read source of all values.
+  collect-d = items: st items.toList;
+
   # map-c :: (a -> b) -> ST a -> ST b
   #
   # Cycle constructor for pure functions. Wraps f as a stream transformer.
@@ -295,14 +302,15 @@ let
 in
 {
   inherit
-    run
-    st
-    ctx-s
+    collect-d
     ctx-d
-    scope-d
+    ctx-s
     fanout-d
-    static-d
     map-c
+    run
+    scope-d
+    st
+    static-d
     when-c
     ;
 }
