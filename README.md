@@ -22,7 +22,7 @@ Ned is inspired by [Cycle.js and Haskell 1.0 Dialogue](https://cycle.js.org/dial
 
 Ned's stream-based, FRP kernel can be used for anything you use Nix, not necessarily NixOS configurations.
 
-Our [NixOS tests](templates/ci/modules/tests/nixos) are examples of stream-based NixOS configurations since that is the most common usage of the Nix language. However, these are only code examples and a way to test the kernel itself for real-world usage. You can create your own libraries based on Ned's minimal kernel. Ned is **not** intended to be full featured NixOS configuration framework like [Den](https://github.com/denful/den) is.
+Our [NixOS tests](templates/ci/modules/tests/nixos) are examples of stream-based NixOS configurations since that is the most common usage of the Nix language. However, these are only code examples and a way to test the kernel itself for real-world usage. You can create your own libraries based on Ned's minimal kernel. Ned is **not** intended to be full featured NixOS configuration framework like [Den](https://github.com/denful/den) is, Ned was created and [designed](https://gist.github.com/vic/d39bbd66af78a558fc1aad0d2cc9290c) to be used as Den's stream-based core.
 
 ## Everything is a Stream -- Ned's Core Tenet
 
